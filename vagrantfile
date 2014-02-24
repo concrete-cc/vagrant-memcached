@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+
+def setup_vm(serverName, vmId, sshPort, memPort)
+  vmId.vm.host_name = serverName
+  vmId.vm.box = "precise64"
+  vmId.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  # NAT port forwarding
+  vmId.vm.network :forwarded_port, guest: 22, host: sshPort
+  vmId.vm.network :forwarded_port, guest: 11211, host: memPort
+  
+  # settings for vm
+  vmId.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "512", "--cpus", "1", "--ioapic", "on"]
+  end
+
+  vmId.vm.provision :puppet do |puppet|
+    puppet.manifests_path = "manifests"
+    puppet.manifest_file  = "init.pp"
+  end
+   
+end
+
+Vagrant.configure("2") do |config|
+
+    config.vm.define :mem do |mem|
+        setup_vm("mem1", mem, 2240, 11211)
+    end
+
+    config.vm.define :mem2 do |mem|
+        setup_vm("mem2", mem, 2241, 11212)
+    end
+
+end
+
+
+
