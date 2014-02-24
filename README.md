@@ -6,6 +6,6 @@ A quick and simple way of spinning up a couple of memcached servers.
 Installation
 ============
 
-# clone this repository
-# vagrant up
+1. clone this repository
+2. vagrant up
 
